@@ -1,6 +1,7 @@
 package com.example.aps.presentation
 
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -14,9 +15,9 @@ class MainViewModel(
     private val useCase: GetInfoUseCase
 ): ViewModel() {
 
-    private val _resultSuccess = MutableLiveData<ObjectPresentation>()
+    private val _resultSuccess = MutableLiveData<ViewAction>()
 
-    val resultSuccess: LiveData<ObjectPresentation>
+    val resultSuccess: LiveData<ViewAction>
         get() =_resultSuccess
 
     fun call() {
@@ -24,7 +25,10 @@ class MainViewModel(
             kotlin.runCatching {
                 useCase()
             }.onSuccess {
-                _resultSuccess.postValue(it.getOrNull())
+                _resultSuccess.postValue(ViewAction.Success(it.getOrNull()!!))
+                Log.d("Call", "call() returned: $it")
+            }.onFailure {
+                _resultSuccess.postValue(ViewAction.Error)
                 Log.d("Call", "call() returned: $it")
             }
         }

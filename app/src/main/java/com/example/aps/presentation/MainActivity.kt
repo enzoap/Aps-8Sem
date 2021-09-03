@@ -2,11 +2,14 @@ package com.example.aps.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.aps.databinding.ActivityMainBinding
+import com.example.aps.presentation.model.ObjectPresentation
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
@@ -27,19 +30,36 @@ class MainActivity : AppCompatActivity() {
     private fun observerLiveData() {
         viewModel.resultSuccess.observe(
             this,
-            {
-                with(binding) {
-                    progressBar.visibility = View.VISIBLE
-                    loadImage(it.icon, imgIcon)
-                    txtCidade.text = it.name
-                    txtTemp.text = it.temperature
-                    txtClima.text = it.text
-                    txtQualidade.text = it.airQuality
+            { action ->
+                when (action) {
+                    is ViewAction.Error -> errorState()
+                    is ViewAction.Success -> showInfo(action.info)
                 }
-                setupView(true)
             }
         )
     }
+
+    private fun errorState() {
+        val toast = Toast.makeText(
+            this,
+            "Erro, tente novamente",
+            Toast.LENGTH_SHORT
+        ).show()
+
+        binding.progressBar.visibility = View.GONE
+    }
+    private fun showInfo(action: ObjectPresentation) {
+        with(binding) {
+            setupView(false)
+            loadImage(action.icon, imgIcon)
+            txtCidade.text = action.name
+            txtTemp.text = "${action.temperature} °C"
+            txtClima.text = action.text
+            txtQualidade.text = action.airQuality
+        }
+        setupView(true)
+    }
+
 
     private fun setupClicks() {
         binding.btnAtualizar.setOnClickListener {
@@ -58,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                 txtTemp.visibility = View.VISIBLE
                 textView7.visibility = View.VISIBLE
                 txtCidade.visibility = View.VISIBLE
+                imgIcon.visibility = View.VISIBLE
             }
         } else {
             with(binding){
@@ -68,13 +89,14 @@ class MainActivity : AppCompatActivity() {
                 txtTemp.visibility = View.GONE
                 textView7.visibility = View.GONE
                 txtCidade.visibility = View.GONE
+                imgIcon.visibility = View.GONE
             }
         }
     }
 
     private fun loadImage(url: String , imageView: ImageView) {
         Glide.with(this)
-            .load("https:$url")
+            .load(url)
             .skipMemoryCache(true)
             .diskCacheStrategy(DiskCacheStrategy.NONE)
             .into(imageView)
