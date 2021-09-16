@@ -2,7 +2,6 @@ package com.example.aps.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Gravity
 import android.view.View
 import android.widget.ImageView
 import android.widget.Toast
@@ -33,14 +32,14 @@ class MainActivity : AppCompatActivity() {
             { action ->
                 when (action) {
                     is ViewAction.Error -> errorState()
-                    is ViewAction.Success -> showInfo(action.info)
+                    is ViewAction.Success -> successState(action.info)
                 }
             }
         )
     }
 
     private fun errorState() {
-        val toast = Toast.makeText(
+        Toast.makeText(
             this,
             "Erro, tente novamente",
             Toast.LENGTH_SHORT
@@ -48,7 +47,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.progressBar.visibility = View.GONE
     }
-    private fun showInfo(action: ObjectPresentation) {
+    private fun successState(action: ObjectPresentation) {
         with(binding) {
             setupView(false)
             loadImage(action.icon, imgIcon)
