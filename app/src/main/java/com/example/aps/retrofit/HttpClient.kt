@@ -1,4 +1,4 @@
-package com.example.aps.data.retrofit
+package com.example.aps.retrofit
 
 import retrofit2.Retrofit
 

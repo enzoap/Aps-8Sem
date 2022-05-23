@@ -7,12 +7,13 @@ import android.widget.ImageView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.example.aps.R
 import com.example.aps.databinding.ActivityMainBinding
-import com.example.aps.presentation.model.ObjectPresentation
+import com.example.aps.presentation.model.WeatherPresentation
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : AppCompatActivity() {
-    private val viewModel: MainViewModel by viewModel()
+    private val viewModel: WeatherViewModel by viewModel()
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -21,40 +22,49 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setupView(false)
-        viewModel.call()
         observerLiveData()
         setupClicks()
     }
 
     private fun observerLiveData() {
         viewModel.resultSuccess.observe(
-            this,
-            { action ->
-                when (action) {
-                    is ViewAction.Error -> errorState()
-                    is ViewAction.Success -> successState(action.info)
-                }
+            this
+        ) { state ->
+            when (state) {
+                is ViewState.Error -> errorState(state.message)
+                is ViewState.Success -> successState(state.info)
+                is ViewState.HideLoading -> hideLoading()
+                is ViewState.ShowLoading -> showLoading()
             }
-        )
+        }
     }
 
-    private fun errorState() {
+    private fun errorState(message: String) {
         Toast.makeText(
             this,
-            "Erro, tente novamente",
+            message,
             Toast.LENGTH_SHORT
         ).show()
 
         binding.progressBar.visibility = View.GONE
     }
-    private fun successState(action: ObjectPresentation) {
+
+    private fun showLoading() {
+        binding.progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideLoading() {
+        binding.progressBar.visibility = View.GONE
+    }
+
+    private fun successState(state: WeatherPresentation) {
         with(binding) {
             setupView(false)
-            loadImage(action.icon, imgIcon)
-            txtCidade.text = action.name
-            txtTemp.text = "${action.temperature} °C"
-            txtClima.text = action.text
-            txtQualidade.text = action.airQuality
+            loadImage(state.icon, imgIcon)
+            txtCidade.text = state.name
+            txtTemp.text = getString(R.string.temperatura, state.temperature)
+            txtClima.text = state.text
+            txtQualidade.text = state.airQuality
         }
         setupView(true)
     }
@@ -62,15 +72,13 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupClicks() {
         binding.btnAtualizar.setOnClickListener {
-            setupView(false)
-            viewModel.call()
+            viewModel.getWeatherInfo()
         }
     }
 
     private fun setupView(visible: Boolean) {
         if (visible) {
             with(binding) {
-                progressBar.visibility = View.GONE
                 txtQualidade.visibility = View.VISIBLE
                 txtClima.visibility = View.VISIBLE
                 txtQualidade.visibility = View.VISIBLE
@@ -81,7 +89,6 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             with(binding){
-                progressBar.visibility = View.VISIBLE
                 txtQualidade.visibility = View.GONE
                 txtClima.visibility = View.GONE
                 txtQualidade.visibility = View.GONE

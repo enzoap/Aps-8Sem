@@ -1,6 +1,6 @@
 package com.example.aps.presentation.model
 
-data class ObjectPresentation(
+data class WeatherPresentation(
     val name: String,
     val region: String,
     val temperature: String,

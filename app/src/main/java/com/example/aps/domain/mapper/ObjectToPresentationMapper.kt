@@ -1,18 +1,26 @@
 package com.example.aps.domain.mapper
 
-import com.example.aps.domain.model.ObjectDomain
-import com.example.aps.presentation.model.ObjectPresentation
-import com.example.aps.utils.Mapper
+import com.example.aps.domain.model.WeatherModel
+import com.example.aps.presentation.model.WeatherPresentation
 
-class ObjectToPresentationMapper: Mapper<ObjectDomain, ObjectPresentation> {
-    override fun map(source: ObjectDomain): ObjectPresentation {
-        return ObjectPresentation(
-            name = source.name,
-            region = source.region,
-            temperature = source.temperature,
-            icon = source.icon,
-            airQualityIndex = source.airQuality,
-            text = source.text
-        )
+fun WeatherModel.toPresentation() = WeatherPresentation(
+    name = name,
+    region = region,
+    temperature = temperature,
+    icon = icon,
+    airQualityIndex = airQuality,
+    text = text,
+    airQuality = airQualityIndexToAirQuality()
+)
+
+fun WeatherModel.airQualityIndexToAirQuality(): String {
+    return when (airQuality) {
+        1.0 -> "Boa"
+        2.0 -> "Moderado"
+        3.0, 4.0 -> "Ruim"
+        5.0 -> "Muito Ruim"
+        6.0 -> "Péssima"
+        else -> { "Qualidade do ar indisponível" }
     }
 }
+

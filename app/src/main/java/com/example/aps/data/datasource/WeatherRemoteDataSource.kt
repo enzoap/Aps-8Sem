@@ -1,7 +1,8 @@
 package com.example.aps.data.datasource
 
 import com.example.aps.data.api.WeatherService
-import com.example.aps.data.exceptions.WeatherException
+import com.example.aps.data.exceptions.WeatherErrorResponse
+import com.example.aps.domain.exception.WeatherException
 import com.example.aps.data.mapper.toDomain
 import com.example.aps.domain.model.WeatherModel
 import com.google.gson.Gson
@@ -25,7 +26,7 @@ class WeatherRemoteDataSource(
                 .response()
                 ?.errorBody()
                 ?.string()
-                .orEmpty(), WeatherException::class.java)
+                .orEmpty(), WeatherErrorResponse::class.java)
         }.getOrDefault(error) as Throwable
 
         throw handleException
