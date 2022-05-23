@@ -13,7 +13,7 @@ Projeto simples mas com o intuito de colocar novos conhecimentos adquiridos atr√
 ## Development Roadmap
 - [x] [Flow](https://developer.android.com/kotlin/flow?hl=pt-br)
 - [x] [Clean architecture](https://developer.android.com/jetpack/guide?hl=pt-br)
-- [x] [MVVM]((https://developer.android.com/jetpack/guide))
+- [x] [MVVM](https://developer.android.com/jetpack/guide)
 - [x] [Coroutines](https://developer.android.com/kotlin/coroutines?hl=pt-br)
 - [ ] [Mockk](https://mockk.io/) 
 - [ ] [Jetpack Compose](https://developer.android.com/jetpack/compose?gclsrc=ds&gclsrc=ds)
