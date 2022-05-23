@@ -2,7 +2,7 @@ package com.example.aps.data.model
 
 import com.google.gson.annotations.SerializedName
 
-data class Response(
+data class WeatherResponse(
     @SerializedName("name")
     val name: String,
     @SerializedName("region")
